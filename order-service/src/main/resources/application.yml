@@ -1,0 +1,35 @@
+server:
+  port: 8082
+
+spring:
+  h2:
+    console:
+      enabled: true
+  application:
+    name: ORDER-SERVICE
+ 
+#Resilience 4j Configuration
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10    #size of the buffer that will store events from the Circuit Breaker
+        failureRateThreshold: 50    #threshold for the failure rate of calls. If the failure rate of calls exceeds this threshold i.e,(50% here) the Circuit Breaker will trip
+        minimumNumberOfCalls: 3    #minimum number of calls that the Circuit Breaker will monitor before it starts tripping.(tripping means state chnage krne se pehle)
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
